@@ -71,25 +71,28 @@ def create_spend_chart(categories):
         percentages[category.category] = (cat_expenses / total_amount) * 100
 
     # printing graph 
-    print("Percentage spent by category")
+    graph = ""
+    graph += "Percentage spent by category" + "\n"
     for i in range(100, -10, -10): 
-        line = str(i).rjust(3)+"|"
+        graph += str(i).rjust(3)+"|"
         for key in percentages:
             if percentages[key] >= i:
-                line += "o".center(3)
+                graph += "o".center(3)
             else:
-                line += "   "
-        print(line)
-    print("    " + ("---"*(len(percentages)) + "-"))
+                graph += "   "
+        graph += "\n"
+    graph += "    " + ("---"*(len(percentages)) + "-" + "\n")
 
     for i in range(max([len(key) for key in percentages])):
-        line2 = "    "
+        graph += "    "
         for key in percentages:
             if i < len(key):
-                line2 += key[i].center(3)
+                graph += key[i].center(3)
             else:
-                line2 += "   "
-        print(line2)    
+                graph += "   "
+        if i < max([len(key) for key in percentages])-1:
+            graph += "\n"
+    return graph   
 
     
 
@@ -108,6 +111,6 @@ auto.withdraw(60)
 
 print(food, end = "\n\n\n")
 
-create_spend_chart([food, clothing, auto])
+print(create_spend_chart([food, clothing, auto]))
 
 
