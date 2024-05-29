@@ -31,7 +31,7 @@ class Category:
 #withdraw function
     def withdraw (self, amount, description=""):
         if self.check_funds(amount): 
-            self.ledger.append({"amount": (amount*-1), "description": description})
+            self.ledger.append({"amount": (-amount), "description": description})
             return True
         else:
             return False
@@ -53,20 +53,32 @@ class Category:
         else: 
             return True
 
+# Creation d'une visualisation par graphe
 def create_spend_chart(categories):
-    total_amount = sum([category.get_balance() for category in categories])
-    #percentages = category : %
+    total_amount = 0
+    for category in categories:
+        for i in category.ledger:
+            if i['amount'] < 0:
+                total_amount += i['amount']
+    #percentages = dictionnaire: category : %
     percentages = dict.fromkeys([x.category for x in categories])
-    #calculate all percentages
-    for i in categories:
-        percentages[i.category] = int((i.get_balance() / total_amount) * 100)
+    #calculate all percentages and store it into dict
+    for category in categories:
+        cat_expenses = 0
+        for i in category.ledger:
+            if i['amount']<0:
+                cat_expenses += i['amount']
+        percentages[category.category] = (cat_expenses / total_amount) * 100
 
+    # printing graph 
     print("Percentage spent by category")
     for i in range(100, -10, -10): 
         line = str(i).rjust(3)+"|"
         for key in percentages:
             if percentages[key] >= i:
                 line += "o".center(3)
+            else:
+                line += "   "
         print(line)
     print("    " + ("---"*(len(percentages)) + "-"))
 
@@ -88,7 +100,14 @@ food.deposit(1000, "deposit")
 food.withdraw(10.15, "groceries")
 food.withdraw(15.89, "restaurant and more food for dessert")
 clothing = Category("Clothing")
-food.transfer(50, clothing)
-print(food)
+clothing.deposit(500)
+clothing.withdraw(30)
+auto = Category("Auto")
+auto.deposit(400)
+auto.withdraw(60)
 
-create_spend_chart([food, clothing])
+print(food, end = "\n\n\n")
+
+create_spend_chart([food, clothing, auto])
+
+
