@@ -1,4 +1,6 @@
 class Category:
+    withdraws = 0
+
     def __init__(self, category):
         self.category = category
         self.ledger = []
@@ -32,6 +34,7 @@ class Category:
     def withdraw (self, amount, description=""):
         if self.check_funds(amount): 
             self.ledger.append({"amount": (-amount), "description": description})
+            self.withdraws += amount
             return True
         else:
             return False
@@ -55,20 +58,14 @@ class Category:
 
 # Creation d'une visualisation par graphe
 def create_spend_chart(categories):
-    total_amount = 0
+    total_withdraw = 0
     for category in categories:
-        for i in category.ledger:
-            if i['amount'] < 0:
-                total_amount += i['amount']
+        total_withdraw += category.withdraws
     #percentages = dictionnaire: category : %
     percentages = dict.fromkeys([x.category for x in categories])
     #calculate all percentages and store it into dict
     for category in categories:
-        cat_expenses = 0
-        for i in category.ledger:
-            if i['amount']<0:
-                cat_expenses += i['amount']
-        percentages[category.category] = (cat_expenses / total_amount) * 100
+        percentages[category.category] = (category.withdraws / total_withdraw) * 100
 
     # printing graph 
     graph = ""
@@ -108,6 +105,8 @@ clothing.withdraw(30)
 auto = Category("Auto")
 auto.deposit(400)
 auto.withdraw(60)
+
+
 
 print(food, end = "\n\n\n")
 
